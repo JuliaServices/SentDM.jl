@@ -181,9 +181,15 @@ list_templates(; page::Int = 1, page_size::Int = 100) =
 "Create a template from `body`, which is written as JSON, and return it."
 create_template(body) = _request("POST", "/v3/templates", JSON.json(body))
 
-"Update the template `id` with the fields in `body`, which is written as JSON, and return it."
-update_template(id::String, body) =
-    _request("PUT", "/v3/templates/" * HTTP.URIs.escapeuri(id), JSON.json(body))
+"""
+    update_template(id, body; idempotency_key=nothing)
+
+Update the template `id` with the fields in `body`, which is written as JSON, and return it.
+HTTP.jl sends a PUT again when its answer is lost. Without `idempotency_key`, a repeated
+`submit_for_review` fails with `409 CONFLICT_006` although the first one worked.
+"""
+update_template(id::String, body; idempotency_key::Union{String,Nothing} = nothing) =
+    _request("PUT", "/v3/templates/" * HTTP.URIs.escapeuri(id), JSON.json(body), idempotency_key)
 
 # The loop reads every byte, so the time taken does not show where a guess first differs.
 function _equal_bytes(a::AbstractVector{UInt8}, b::AbstractVector{UInt8})::Bool

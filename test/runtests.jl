@@ -118,6 +118,10 @@ end
             @test SentDM.update_template(template_id, (; name = "Club opt-out reply"))["status"] == "DRAFT"
             @test seen[] == request("PUT", "/v3/templates/$template_id";
                 body = """{"name":"Club opt-out reply"}""")
+            SentDM.update_template(template_id, (; submit_for_review = true);
+                idempotency_key = "template-review-1")
+            @test seen[] == request("PUT", "/v3/templates/$template_id"; key = "template-review-1",
+                body = """{"submit_for_review":true}""")
 
             reply[] = (201, """{"success":true,"data":{"id":"$template_id","status":"PENDING"}}""")
             @test SentDM.create_template((; name = "Club notification"))["status"] == "PENDING"

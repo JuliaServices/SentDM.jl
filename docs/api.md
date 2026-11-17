@@ -58,7 +58,7 @@ Sent answers `202`. The client reads `data.status`, and `message_id`, `to`, and 
 
 ### Update a template
 
-`update_template` calls `PUT /v3/templates/{id}` with the caller's body. The OpenAPI body fields are `name`, `category`, `language`, `definition`, and `submit_for_review`. The client returns `data`, the updated template.
+`update_template` calls `PUT /v3/templates/{id}` with the caller's body, and with an `Idempotency-Key` when the caller passes one. A key lets a retry after a lost answer get the first answer back: without one, a repeated `submit_for_review` fails with `409 CONFLICT_006` while the template is in review ([Template definition](https://docs.sent.dm/reference/api/template-definition)). The OpenAPI body fields are `name`, `category`, `language`, `definition`, and `submit_for_review`. The client returns `data`, the updated template.
 
 ## Webhooks
 
