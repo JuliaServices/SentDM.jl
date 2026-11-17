@@ -1,0 +1,5 @@
+[deps]
+SentDM = "1f5d61f6-03f0-495d-9798-46761952a5f7"
+
+[sources]
+SentDM = {path = "../.."}
